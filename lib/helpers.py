@@ -1,4 +1,3 @@
-# helpers.py
 from models import get_db_connection
 from models.Recipes import add_recipe, get_all_recipes, get_recipe_by_id,  update_recipe as update_recipe_model, delete_recipe as delete_recipe_model
 from models.Ingredients import add_ingredient, get_ingredient_by_name, get_all_ingredients
@@ -87,7 +86,7 @@ def update_recipe():
         if new_instructions:
             recipe_dict['instructions'] = new_instructions
 
-        # Use the correct update function
+        # Using the correct update function
         update_recipe_model(id_, recipe_dict['name'], recipe_dict['instructions'])
         print(f"Recipe '{recipe_dict['name']}' updated successfully.")
     else:
