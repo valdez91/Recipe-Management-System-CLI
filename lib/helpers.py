@@ -1,7 +1,6 @@
 # helpers.py
-
 from models import get_db_connection
-from models.Recipes import add_recipe, get_all_recipes, get_recipe_by_id, update_recipe, delete_recipe
+from models.Recipes import add_recipe, get_all_recipes, get_recipe_by_id,  update_recipe as update_recipe_model, delete_recipe as delete_recipe_model
 from models.Ingredients import add_ingredient, get_ingredient_by_name, get_all_ingredients
 from models.RecipeIngredients import add_recipe_ingredient, get_ingredients_for_recipe, get_recipes_for_ingredient
 
@@ -57,12 +56,15 @@ def update_recipe():
     id_ = input("Enter the recipe's id: ")
     recipe = get_recipe_by_id(id_)
     if recipe:
+        # Convert sqlite3.Row to dictionary
+        recipe_dict = dict(recipe)
+
         new_name = input("Enter new recipe name (leave blank to keep current): ")
         new_ingredients = input("Enter new ingredients (leave blank to keep current): ")
         new_instructions = input("Enter new instructions (leave blank to keep current): ")
 
         if new_name:
-            recipe['name'] = new_name
+            recipe_dict['name'] = new_name
         if new_ingredients:
             # Delete old ingredients
             conn = get_db_connection()
@@ -83,17 +85,20 @@ def update_recipe():
                 add_recipe_ingredient(id_, ingredient_id, quantity.strip())
 
         if new_instructions:
-            recipe['instructions'] = new_instructions
+            recipe_dict['instructions'] = new_instructions
 
-        update_recipe(id_, recipe['name'], recipe['instructions'])
-        print(f"Recipe '{recipe['name']}' updated successfully.")
+        # Use the correct update function
+        update_recipe_model(id_, recipe_dict['name'], recipe_dict['instructions'])
+        print(f"Recipe '{recipe_dict['name']}' updated successfully.")
     else:
         print(f"Recipe '{id_}' not found")
+
+
 
 def delete_recipe():
     id_ = input("Enter the recipe's id: ")
     if get_recipe_by_id(id_):
-        delete_recipe(id_)
+        delete_recipe_model(id_)
         print(f"Recipe '{id_}' deleted successfully.")
     else:
         print(f"Recipe '{id_}' not found")
